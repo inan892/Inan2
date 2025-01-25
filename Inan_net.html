@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>inan.net - Sosyal Medya</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        form {
+            display: block;
+            margin: 0 auto;
+            width: 250px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #profile {
+            margin-top: 20px;
+        }
+
+        #posts, #globalPosts {
+            margin-top: 10px;
+            text-align: left;
+            width: 60%;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .post strong {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>inan.net - Sosyal Medya</h1>
+        <nav>
+            <a href="#profile" id="goToProfile" style="display:none;">Profilim</a>
+            <a href="#registration" id="goToRegistration" style="display:none;">Kaydol</a>
+        </nav>
+    </header>
+
+    <section id="registration">
+        <h2>Kayıt Ol</h2>
+        <form id="registrationForm">
+            <label for="email">E-posta:</label>
+            <input type="email" id="email" required><br><br>
+            <label for="password">Şifre:</label>
+            <input type="password" id="password" required><br><br>
+            <label for="username">Kullanıcı Adı:</label>
+            <input type="text" id="username" required><br><br>
+            <button type="submit">Kaydol</button>
+        </form>
+    </section>
+
+    <section id="profile" style="display:none;">
+        <h2>Profil Sayfası</h2>
+        <p>Hoş geldiniz, <span id="displayUsername"></span>!</p>
+        <button id="editProfileButton">Profilini Düzenle</button>
+
+        <div id="profileSettings" style="display:none;">
+            <label for="newUsername">Yeni Kullanıcı Adı:</label>
+            <input type="text" id="newUsername">
+            <button id="saveNewUsername">Değiştir</button>
+        </div>
+
+        <h3>Postlar</h3>
+        <div id="posts"></div>
+        <textarea id="postContent" placeholder="Yeni bir post yaz..."></textarea>
+        <button id="postButton">Paylaş</button>
+
+        <h3>Global Paylaşımlar</h3>
+        <div id="globalPosts"></div>
+    </section>
+
+    <script>
+        let userData = {
+            email: '',
+            password: '',
+            username: '',
+            posts: []
+        };
+
+        let globalPosts = [];
+
+        // Kaydolma işlemi
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            userData.email = document.getElementById('email').value;
+            userData.password = document.getElementById('password').value;
+            userData.username = document.getElementById('username').value;
+
+            document.getElementById('registration').style.display = 'none';
+            document.getElementById('profile').style.display = 'block';
+            document.getElementById('goToProfile').style.display = 'inline';
+            document.getElementById('goToRegistration').style.display = 'none';
+            document.getElementById('displayUsername').innerText = userData.username;
+        });
+
+        // Profil düzenleme
+        document.getElementById('editProfileButton').addEventListener('click', function() {
+            document.getElementById('profileSettings').style.display = 'block';
+        });
+
+        // Kullanıcı adı değiştirme
+        document.getElementById('saveNewUsername').addEventListener('click', function() {
+            const newUsername = document.getElementById('newUsername').value;
+            if (newUsername) {
+                userData.username = newUsername;
+                document.getElementById('displayUsername').innerText = newUsername;
+                document.getElementById('newUsername').value = '';
+                document.getElementById('profileSettings').style.display = 'none';
+            }
+        });
+
+        // Post paylaşma (Global olarak yayınla)
+        document.getElementById('postButton').addEventListener('click', function() {
+            const postContent = document.getElementById('postContent').value;
+            if (postContent) {
+                userData.posts.push(postContent);
+                globalPosts.push({ username: userData.username, content: postContent });
+                updateGlobalPosts();
+                document.getElementById('postContent').value = '';
+            }
+        });
+
+        // Tüm global postları güncelleme
+        function updateGlobalPosts() {
+            const globalPostsSection = document.getElementById('globalPosts');
+            globalPostsSection.innerHTML = '';
+
+            globalPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `<strong>${post.username}</strong>: ${post.content}`;
+                globalPostsSection.appendChild(postElement);
+            });
+        }
+    </script>
+</body>
+</html>
